@@ -1,0 +1,88 @@
+﻿@{
+    ViewData["Title"] = "Student Page";
+}
+
+<input type="text" id="txtSearch" style="margin-right:5px;" placeholder="Type Name" />
+<button id="btnGetStudents" class="btn btn-primary">Get Students</button>
+
+<br/>
+<br />
+
+<input type="hidden" id="txtStudentId" style="margin-right:5px"; />
+<input type="text" id="txtName" style="margin=right:5px"; placeholder="Name" />
+<input type="text" id="txtAge" style="margin-right:5px"; placeholder="Age"/>
+<button id="btnSaveStudents" class="btn btn-success">Save Student</button>
+
+<br />
+<br />
+
+<table id="tblStudent" class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>StudentId</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script src="~/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+    var _students = [];
+
+    $("btnGetStudents").click(function () {
+        GetStudents();
+    });
+    $("btnSaveStudents").click(function() {
+        var student = {
+            StudendId: $("#txtStudentId").val(),
+            Name: $("#txtName").val(),
+            Age: $("#txtAge").val()
+        };
+        $.post("Students/SaveOrUpdate", student, function () {
+            $("#txtStudentId").val(0);
+            GetStudents();
+            Reset();
+        });
+    });
+
+    function GetStudents() {
+        _students = [];
+        $("#tblStudent tbody tr").remove();
+
+        var name = $.trim($("#txtSearch").val());
+        $.get("Students/GetStudents?name=" + name, function (students) {
+            _students = students;
+            $.map(students, function (student) {
+                $("#tblStudent tbody").append(`<tr>
+                                                    <td>` + student.studentId + `</td>
+                                                    <td>` + student.name + `</td>
+                                                    <td>` + student.age + `</td>
+                                                    <td>
+                                                        <button class="btn btn-primary" onClick='Edit(`+ student.studentId + `)'>Edit</button>
+                                                        <button class="btn btn-danger" onClick='Delete(`+ student.studentId+ `)'>Delete</button>
+                                                    </td>
+                                               </tr>`);
+            });
+        });
+    }
+    function Edit(studentId) {
+        var student = _students.find(x => x.studentId == studentsId);
+        $("#txtStudentId").val(student.studentId);
+        $("#txtName").val(student.name);
+        $("#txtAge").val(student.age);
+    }
+    function Delete(studentId) {
+        $.post("Students/Delete?studentId=" + studentId, function () {
+            GetStudents();
+        });
+    }
+    function Reset() {
+        $("#txtStudentId").val(0),
+        $("#txtName").val("");
+        $("#txtAge").val(0);
+    }
+
+</script>
