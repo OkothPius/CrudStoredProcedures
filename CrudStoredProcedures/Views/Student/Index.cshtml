@@ -9,7 +9,7 @@
 <br />
 
 <input type="hidden" id="txtStudentId" style="margin-right:5px"; />
-<input type="text" id="txtName" style="margin=right:5px"; placeholder="Name" />
+<input type="text" id="txtName" style="margin-right:5px"; placeholder="Name" />
 <input type="text" id="txtAge" style="margin-right:5px"; placeholder="Age"/>
 <button id="btnSaveStudents" class="btn btn-success">Save Student</button>
 
@@ -32,16 +32,16 @@
 <script type="text/javascript">
     var _students = [];
 
-    $("btnGetStudents").click(function () {
+    $("#btnGetStudents").click(function () {
         GetStudents();
     });
-    $("btnSaveStudents").click(function() {
+    $("#btnSaveStudents").click(function() {
         var student = {
             StudendId: $("#txtStudentId").val(),
             Name: $("#txtName").val(),
             Age: $("#txtAge").val()
         };
-        $.post("Students/SaveOrUpdate", student, function () {
+        $.post("Student/SaveOrUpdate", student, function () {
             $("#txtStudentId").val(0);
             GetStudents();
             Reset();
@@ -53,7 +53,7 @@
         $("#tblStudent tbody tr").remove();
 
         var name = $.trim($("#txtSearch").val());
-        $.get("Students/GetStudents?name=" + name, function (students) {
+        $.get("Student/GetStudents?name=" + name, function (students) {
             _students = students;
             $.map(students, function (student) {
                 $("#tblStudent tbody").append(`<tr>
@@ -69,13 +69,13 @@
         });
     }
     function Edit(studentId) {
-        var student = _students.find(x => x.studentId == studentsId);
+        var student = _students.find(x => x.studentId == studentId);
         $("#txtStudentId").val(student.studentId);
         $("#txtName").val(student.name);
         $("#txtAge").val(student.age);
     }
     function Delete(studentId) {
-        $.post("Students/Delete?studentId=" + studentId, function () {
+        $.post("Student/Delete?studentId=" + studentId, function () {
             GetStudents();
         });
     }
